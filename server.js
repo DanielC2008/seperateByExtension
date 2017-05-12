@@ -3,32 +3,35 @@
 const express = require('express')
 const PORT = process.env.PORT || 3000
 const app = express()
-const { rename, readdir } = require('fs')
+
+const { rename, readdir, existsSync } = require('fs')
 const path = require('path')
 const ncp = require('ncp').ncp 
+const mkdirp = require('mkdirp')
 
 let [,,...rest] = process.argv
-let transferFrom = rest[0]
-let transferTo = rest[1]
+let startDir = rest[0]
+let sortedDir = rest[1]
 
-let getExt = fullFile => fullFile.slice(fullFile.lastIndexOf(".") + 1 )
+const getExt = fullFile => fullFile.slice(fullFile.lastIndexOf(".") + 1 )
 
+const sortFiles = (err, files) => {
 
-let readdirComplete = (err, files) => {
-  files.forEach( file => {
+  files.map( file => {
     //get ext
     let ext = getExt(file)
-    //check if file is in dir w/ ext name is in toPath  
-    //if dir exists
-      //copy file into this dir
-    // else 
-      // create dir copy file
-    // let fromPath = path.join( transferFrom, file )
-    // let toPath = path.join( transferTo, file )
-    // ncp(fromPath, toPath)
-  })  
-
+    //create new path
+    let transferTo = path.join(sortedDir, ext)
+    //check if dir w/ ext name exists else create it
+    if (!existsSync(transferTo)) {
+      mkdirp(transferTo)
+    } 
+    ncp(path.join( startDir, file ), path.join(transferTo, file))
+  }) 
+     
+  console.log('finished!')
 }
-readdir(transferFrom, readdirComplete)
+
+readdir(startDir, sortFiles)
 
 app.listen()
