@@ -1,0 +1,3 @@
+This project was created for an extreme use case. It is a Command Line App that sorts all files in a directory by their file extensions. It places each file into a directory labled with the file's extension. These directories are placed in a directory that the user specifies.
+
+To use: git clone the project, cd into the project directory, type 'node server.js Path1 Path2' where Path1 is the path to where the files are located and Path2 is the path to where you want the files to go. 
